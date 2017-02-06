@@ -7,5 +7,9 @@
         "node": "registry:dt/node#6.0.0+20161110151007",
         "pug": "registry:dt/pug#2.0.0-beta6+20160919072324",
         "serve-static": "registry:dt/serve-static#0.0.0+20160606155157"
+    },
+    "dependencies": {
+        "form-data": "registry:npm/form-data#1.0.0+20160812072516",
+        "request": "registry:npm/request#2.69.0+20160428223725"
     }
 }
