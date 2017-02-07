@@ -70,6 +70,7 @@ module.exports = {
             "error",
             "never"
         ],
+        "no-unused-vars": "warn",
         "generator-star-spacing": "error",
         "global-require": "off",
         "guard-for-in": "error",
@@ -92,7 +93,6 @@ module.exports = {
         "max-params": "off",
         "max-statements": "off",
         "max-statements-per-line": "error",
-        "new-cap": "error",
         "new-parens": "error",
         "newline-after-var": "off",
         "newline-before-return": "off",
@@ -203,7 +203,6 @@ module.exports = {
         "prefer-reflect": "error",
         "prefer-rest-params": "error",
         "prefer-spread": "error",
-        "prefer-template": "error",
         "quote-props": "off",
         "quotes": [
             "error",
