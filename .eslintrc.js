@@ -195,7 +195,7 @@ module.exports = {
         "one-var": "off",
         "one-var-declaration-per-line": "error",
         "operator-assignment": "error",
-        "operator-linebreak": "error",
+        "operator-linebreak": "off",
         "padded-blocks": "off",
         "prefer-arrow-callback": "error",
         "prefer-const": "off",

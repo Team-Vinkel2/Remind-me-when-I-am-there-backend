@@ -17,6 +17,7 @@ const urls = {
     BASE_URL: 'https://baas.kinvey.com/',
     COLLECTIONS_URL: '',
     USERS_URL: '',
+    USERS_LOGIN_URL: '',
     getResetPasswordByEmailUrl: email => '',
     getUsersUrl: filter => '',
     getCollectionUrl: (collectionName, filter) => ''
@@ -24,6 +25,7 @@ const urls = {
 
 urls.COLLECTIONS_URL = `${urls.BASE_URL}appdata/${kinveyKeys.APP_ID}/`;
 urls.USERS_URL = `${urls.BASE_URL}user/${kinveyKeys.APP_ID}/`;
+urls.USERS_LOGIN_URL = `${urls.USERS_URL}login`;
 
 urls.getResetPasswordByEmailUrl = email => {
     let encodedEmail = crypto.encodeURIComponent(email);
@@ -55,8 +57,16 @@ const authHeaders = {
         };
     }
 };
+
+const commonHeaders = {
+    CONTENT_TYPE_JSON: {
+        name: 'Content-Type',
+        value: 'application/json'
+    }
+};
 module.exports = {
     kinveyAuth,
     urls,
-    authHeaders
+    authHeaders,
+    commonHeaders
 };
