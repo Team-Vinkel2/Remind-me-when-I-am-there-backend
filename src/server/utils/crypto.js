@@ -1,4 +1,4 @@
-const CryptoJS = require('cryptojs');
+const CryptoJS = require('crypto-js');
 
 function encryptToBase64(input) {
     let utf8 = CryptoJS.enc.Utf8.parse(input);

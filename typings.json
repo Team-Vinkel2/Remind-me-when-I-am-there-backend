@@ -9,6 +9,7 @@
         "serve-static": "registry:dt/serve-static#0.0.0+20160606155157"
     },
     "dependencies": {
+        "crypto-js": "github:nozzlegear/crypto-js.d.ts",
         "form-data": "registry:npm/form-data#1.0.0+20160812072516",
         "request": "registry:npm/request#2.69.0+20160428223725"
     }

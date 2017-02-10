@@ -1,4 +1,4 @@
-const crypto = require('../utils/crypto');
+const crypto = require('../../utils/crypto');
 
 const AUTHORIZATION_HEADER_NAME = 'Authorization';
 

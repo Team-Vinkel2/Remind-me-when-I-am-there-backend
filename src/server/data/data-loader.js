@@ -1,13 +1,16 @@
 const fileWalker = require('../utils/file-system-utils').walkDirectorySync;
+const kinveyConfig = require('../config/kinvey');
+const httpClient = require('../utils/http-requester');
 
+const kinveyService = require('./shared/kinvey-service')({ httpClient, config: kinveyConfig });
 
-module.exports = function(requester, config) {
+module.exports = function(config) {
     // validator?
 
     let data = {};
 
     let options = {
-        requester,
+        kinveyService,
         config
     };
 

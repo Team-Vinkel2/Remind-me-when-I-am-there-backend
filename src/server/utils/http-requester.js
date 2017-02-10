@@ -1,19 +1,19 @@
 const request = require('request');
 
 function get(url, options) {
-    let requestHeader = {
-        url
-    };
-
-    if (options) {
-        for (let key in options) {
-            if (!options.hasOwnProperty(key)) {
-                continue;
-            }
-            requestHeader[key] = options[key];
-        }
-    }
     let promise = new Promise((resolve, reject) => {
+        let requestHeader = {
+            url
+        };
+
+        if (options) {
+            for (let key in options) {
+                if (!options.hasOwnProperty(key)) {
+                    continue;
+                }
+                requestHeader[key] = options[key];
+            }
+        }
         request(requestHeader, (err, response, body) => {
             if (err) {
                 return reject(err);
@@ -31,23 +31,23 @@ function getJSON(url, options) {
 }
 
 function post(url, body, options) {
-    let requestHeader = {
-        url,
-        body
-    };
-
-    if (options) {
-        for (let key in options) {
-            if (!options.hasOwnProperty(key)) {
-                continue;
-            }
-            requestHeader[key] = options[key];
-
-
-        }
-    }
-
     let promise = new Promise((resolve, reject) => {
+        let requestHeader = {
+            url,
+            body
+        };
+
+        if (options) {
+            for (let key in options) {
+                if (!options.hasOwnProperty(key)) {
+                    continue;
+                }
+                requestHeader[key] = options[key];
+
+
+            }
+        }
+
         request.post(requestHeader, (err, response, responseBody) => {
             if (err) {
                 return reject(err);
@@ -66,22 +66,22 @@ function postJSON(url, body, options) {
 }
 
 function put(url, body, options) {
-    let requestHeader = {
-        url,
-        body
-    };
-
-    if (options) {
-        for (let key in options) {
-            if (!options.hasOwnProperty(key)) {
-                continue;
-            }
-            requestHeader[key] = options[key];
-
-
-        }
-    }
     let promise = new Promise((resolve, reject) => {
+        let requestHeader = {
+            url,
+            body
+        };
+
+        if (options) {
+            for (let key in options) {
+                if (!options.hasOwnProperty(key)) {
+                    continue;
+                }
+                requestHeader[key] = options[key];
+
+
+            }
+        }
         request.put(requestHeader, (err, response, responseBody) => {
             if (err) {
                 return reject(err);
@@ -100,20 +100,20 @@ function putJSON(url, body, options) {
 }
 
 function httpDelete(url, options) {
-    let requestHeader = {
-        url
-    };
-
-    if (options) {
-        for (let key in options) {
-            if (!options.hasOwnProperty(key)) {
-                continue;
-            }
-            requestHeader[key] = options[key];
-        }
-    }
-
     let promise = new Promise((resolve, reject) => {
+        let requestHeader = {
+            url
+        };
+
+        if (options) {
+            for (let key in options) {
+                if (!options.hasOwnProperty(key)) {
+                    continue;
+                }
+                requestHeader[key] = options[key];
+            }
+        }
+
         request.del(requestHeader, (err, response, responseBody) => {
             if (err) {
                 return reject(err);
