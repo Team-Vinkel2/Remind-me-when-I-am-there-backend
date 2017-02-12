@@ -1,5 +1,5 @@
 // Inject those
-//  const config = require('../../config/kinvey');
+// const config = require('../../config/kinvey');
 // const http = require('../../utils/http-requester');
 
 module.exports = function(params) {
@@ -42,6 +42,36 @@ module.exports = function(params) {
                 return http.postJSON(url, JSON.stringify(body), { headers });
             });
         },
+        getUsersByFilter(filter) {
+            return Promise.resolve().then(() => {
+                let url = config.urls.getUsersUrl(filter);
+
+                let authHeader = config.authHeaders.BASIC_AUTH_HEADER_WITH_MASTER_SECRET;
+
+                let headers = {
+                    [authHeader.name]: authHeader.value
+                };
+
+                return http.getJSON(url, { headers });
+            });
+        },
+        getUserById(id) {
+            return Promise.resolve().then(() => {
+                let filter = {
+                    _id: id
+                };
+
+                let url = config.urls.getUsersUrl(JSON.stringify(filter));
+
+                let authHeader = config.authHeaders.BASIC_AUTH_HEADER_WITH_MASTER_SECRET;
+
+                let headers = {
+                    [authHeader.name]: authHeader.value
+                };
+
+                return http.getJSON(url, { headers });
+            });
+        },
         registerUser(user) {
             return Promise.resolve().then(() => {
                 let url = config.urls.USERS_URL;
@@ -54,7 +84,7 @@ module.exports = function(params) {
                     [contentTypeHeader.name]: contentTypeHeader.value
                 };
 
-                return http.post(url, JSON.stringify(user), { headers });
+                return http.postJSON(url, JSON.stringify(user), { headers });
             });
         },
         loginUser(user) {
@@ -69,7 +99,7 @@ module.exports = function(params) {
                     [contentTypeHeader.name]: contentTypeHeader.value
                 };
 
-                return http.post(url, JSON.stringify(user), { headers });
+                return http.postJSON(url, JSON.stringify(user), { headers });
             });
         },
         resetPasswordByEmail(email) {
