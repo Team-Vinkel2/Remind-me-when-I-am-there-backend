@@ -10,6 +10,9 @@ module.exports = function(options) {
         },
         loginUser(user) {
             return kinveyService.loginUser(user);
+        },
+        resetPasswordByEmail(email) {
+            return kinveyService.resetPasswordByEmail(email);
         }
     };
 };

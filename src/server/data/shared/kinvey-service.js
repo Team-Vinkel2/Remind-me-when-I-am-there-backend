@@ -1,5 +1,5 @@
 // Inject those
-// const config = require('../../config/kinvey');
+//  const config = require('../../config/kinvey');
 // const http = require('../../utils/http-requester');
 
 module.exports = function(params) {
@@ -70,6 +70,19 @@ module.exports = function(params) {
                 };
 
                 return http.post(url, JSON.stringify(user), { headers });
+            });
+        },
+        resetPasswordByEmail(email) {
+            return Promise.resolve().then(() => {
+                let url = config.urls.getResetPasswordByEmailUrl(email);
+
+                let authHeader = config.authHeaders.BASIC_AUTH_HEADER_WITH_APP_SECRET;
+
+                let headers = {
+                    [authHeader.name]: authHeader.value
+                };
+
+                return http.post(url, '', { headers });
             });
         }
     };

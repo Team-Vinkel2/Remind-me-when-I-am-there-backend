@@ -1,6 +1,7 @@
 module.exports = function(app, controllers) {
-
+    let auth = controllers.authController;
     app
-        .post('/login', controllers.authController.loginUser)
-        .post('/register', controllers.authController.registerUser);
+        .post('/login', auth.loginUser)
+        .post('/register', auth.registerUser)
+        .post('/reset-password', auth.resetPasswordByEmail);
 };

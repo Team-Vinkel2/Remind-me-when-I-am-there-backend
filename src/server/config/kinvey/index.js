@@ -28,7 +28,7 @@ urls.USERS_URL = `${urls.BASE_URL}user/${kinveyKeys.APP_ID}/`;
 urls.USERS_LOGIN_URL = `${urls.USERS_URL}login`;
 
 urls.getResetPasswordByEmailUrl = email => {
-    let encodedEmail = crypto.encodeURIComponent(email);
+    let encodedEmail = crypto.encodeURI(email);
     return `${urls.BASE_URL}rpc/${kinveyKeys.APP_ID}/${encodedEmail}/user-password-reset-initiate`;
 };
 
