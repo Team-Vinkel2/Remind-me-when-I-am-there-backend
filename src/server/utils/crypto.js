@@ -13,12 +13,12 @@ function toSha1(string) {
     return sha1;
 }
 
-function encodeURIComponent(string) {
+function encodeURI(string) {
     return encodeURIComponent(string);
 }
 
 module.exports = {
     encryptToBase64,
     toSha1,
-    encodeURIComponent
+    encodeURI
 };
