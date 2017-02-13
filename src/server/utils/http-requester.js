@@ -96,7 +96,7 @@ function put(url, body, options) {
 
 function putJSON(url, body, options) {
     options.json = true;
-    return post(url, body, options);
+    return put(url, body, options);
 }
 
 function httpDelete(url, options) {

@@ -17,7 +17,6 @@ module.exports = function(params) {
             return Promise.resolve().then(() => {
 
                 let url = config.urls.getCollectionUrl(collectionName, options ? options.filter : options);
-
                 let authHeader = getAuthHeaderForCollection(options ? options.authToken : options);
 
                 let headers = {
@@ -43,7 +42,11 @@ module.exports = function(params) {
         },
         putCollection(collectionName, body, options) {
             return Promise.resolve().then(() => {
-                let url = config.urls.getCollectionUrl(collectionName, options ? options.filter : options);
+                let url = config.urls.getCollectionUrl(collectionName);
+
+                if (options.id) {
+                    url = `${url}${options.id}`;
+                }
 
                 let authHeader = getAuthHeaderForCollection(options ? options.authToken : options);
                 let contentTypeHeader = config.commonHeaders.CONTENT_TYPE_JSON;
@@ -53,7 +56,7 @@ module.exports = function(params) {
                     [contentTypeHeader.name]: contentTypeHeader.value
                 };
 
-                return http.postJSON(url, body, { headers });
+                return http.putJSON(url, body, { headers });
             });
         },
         getUsersByFilter(filter) {

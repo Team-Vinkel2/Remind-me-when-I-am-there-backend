@@ -3,5 +3,7 @@ module.exports = function(app, controllers) {
     app
         .post('/login', auth.loginUser)
         .post('/register', auth.registerUser)
-        .post('/reset-password', auth.resetPasswordByEmail);
+        .post('/reset-password', auth.resetPasswordByEmail)
+        // Get this shit out of here
+        .post('/test-relationship-creation', auth._testRelationships);
 };
