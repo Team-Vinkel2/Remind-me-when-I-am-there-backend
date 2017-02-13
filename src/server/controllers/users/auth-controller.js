@@ -14,12 +14,23 @@ module.exports = function(params) {
         },
         registerUser(req, res) {
             let user = req.body.user;
+            data.registerUser(user)
+                .then(result => {
+                    let createdUser = result.response.body;
 
-            data.registerUser(user).then(result => {
-                let body = result.response.body;
+                    return Promise.all([data.createRelationshipMapForUser(createdUser), createdUser]);
+                })
+                .then(result => {
+                    let [
+                        buddiesResult,
+                        createdUser
+                    ] = result;
 
-                return res.status(200).json(body);
-            });
+                    let buddies = buddiesResult.response.body.buddies;
+
+                    createdUser.buddies = buddies;
+                    return res.status(200).json(createdUser);
+                });
         },
         resetPasswordByEmail(req, res) {
             let email = req.body.email;
