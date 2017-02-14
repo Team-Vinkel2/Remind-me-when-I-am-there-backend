@@ -1,5 +1,6 @@
 // const kinveyService = require('../shared/kinvey-service')({});
 const relationshipsCollection = 'relationships';
+const buddyRequestsCollection = 'buddyrequests';
 
 module.exports = function(options) {
     let kinveyService = options.kinveyService;
@@ -30,7 +31,7 @@ module.exports = function(options) {
                     // console.log('========================');
 
                     if (!firstUser._id || !firstUser.username || !secondUser._id || !secondUser.username) {
-                        return reject('Id/username for BOTH users was not presented');
+                        return reject({ error: { message: 'Id/username for BOTH users was not presented' } });
                     }
 
                     let filterFirstUser = {
@@ -70,8 +71,8 @@ module.exports = function(options) {
 
 
 
-                    let [firstUserRelationships] = firstUserResponse.response.body;
-                    let [secondUserRelationships] = secondUserResponse.response.body;
+                    let [firstUserRelationships] = firstUserResponse.body;
+                    let [secondUserRelationships] = secondUserResponse.body;
                     // console.log('========================');
                     // console.log('CURRENT REALTIONSHIPS FOR USERS');
                     // console.log('========================');
@@ -107,8 +108,8 @@ module.exports = function(options) {
                         secondUserRelationshipsResponse
                     ] = result;
 
-                    let firstUserRelationships = firstUserRelationshipsResponse.response.body;
-                    let secondUserRelationships = secondUserRelationshipsResponse.response.body;
+                    let firstUserRelationships = firstUserRelationshipsResponse.body;
+                    let secondUserRelationships = secondUserRelationshipsResponse.body;
                     // console.log('========================');
                     // console.log('CHANGED REALTIONSHIPS FOR USERS');
                     // console.log('========================');
@@ -121,6 +122,64 @@ module.exports = function(options) {
 
                     return '';
                 });
+
+            return promise;
+        },
+        createBuddyRequest(fromUser, toUser) {
+            let promise =
+                new Promise((resolve, reject) => {
+                    if (!fromUser._id || !fromUser.username || !toUser._id || !toUser.username) {
+                        reject({ error: { message: 'Not enough info was provided' } });
+                    }
+
+                    let buddyRequest = {
+                        from_id: fromUser._id,
+                        from_username: fromUser.username,
+                        to_id: toUser._id,
+                        to_username: toUser.username
+                    };
+
+                    resolve(kinveyService.postCollection(buddyRequestsCollection, buddyRequest));
+                })
+                .then(result => {
+                    let entry = result.body;
+
+                    return entry;
+                });
+
+            return promise;
+        },
+        checkIfBuddyRequestExistBetweenUsers(firstUser, secondUser) {
+            let promise = new Promise((resolve, reject) => {
+
+                if (!firstUser._id || !firstUser.username || !secondUser._id || !secondUser.username) {
+                    return reject({ error: { message: 'Id/username for BOTH users was not presented' } });
+                }
+
+                let requestFilter = {
+                    $or: [{
+                        from_id: firstUser._id,
+                        from_username: firstUser.username,
+                        to_id: secondUser._id,
+                        to_username: secondUser.username
+                    }, {
+                        from_id: secondUser._id,
+                        from_username: secondUser.username,
+                        to_id: firstUser._id,
+                        to_username: firstUser.username
+                    }]
+                };
+
+                resolve(kinveyService.getCollection(buddyRequestsCollection, { filter: JSON.stringify(requestFilter) }));
+            }).then(result => {
+                let [buddyRequest] = result.body;
+
+                if (!buddyRequest || !buddyRequest._id) {
+                    return { exists: false, buddyRequest: '' };
+                }
+
+                return { exists: true, buddyRequest };
+            });
 
             return promise;
         }

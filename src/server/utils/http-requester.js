@@ -53,7 +53,7 @@ function post(url, body, options) {
                 return reject(err);
             }
 
-            resolve({ response, responseBody });
+            resolve({ response, body: responseBody });
         });
     });
     return promise;
@@ -87,7 +87,7 @@ function put(url, body, options) {
                 return reject(err);
             }
 
-            resolve({ response, responseBody });
+            resolve({ response, body: responseBody });
         });
     });
     return promise;
@@ -119,7 +119,7 @@ function httpDelete(url, options) {
                 return reject(err);
             }
 
-            resolve({ response, responseBody });
+            resolve({ response, body: responseBody });
         });
     });
     return promise;

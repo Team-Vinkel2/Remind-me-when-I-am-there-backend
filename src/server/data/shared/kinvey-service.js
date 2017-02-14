@@ -114,6 +114,20 @@ module.exports = function(params) {
 
                 return http.post(url, '', { headers });
             });
+        },
+        getUserByAuthToken(authToken) {
+            return Promise.resolve().then(() => {
+                let url = config.urls.USERS_URL;
+                url = `${url}_me`;
+
+                let authHeader = config.authHeaders.getAuthHeaderWithUserSession(authToken);
+
+                let headers = {
+                    [authHeader.name]: authHeader.value
+                };
+
+                return http.getJSON(url, { headers });
+            });
         }
     };
 };

@@ -13,16 +13,19 @@ module.exports = function(options) {
 
                     return kinveyService.getUsersByFilter(JSON.stringify(filter));
                 })
-                .then(users => {
-                    let [user] = users;
+                .then(result => {
+                    let [user] = result.body;
                     return user;
                 });
         },
-        getUserByFilter(filter) {
+        getUsersByFilter(filter) {
             return Promise.resolve()
                 .then(() => {
                     return kinveyService.getUsersByFilter(filter);
                 });
+        },
+        getUserByAuthToken(authToken) {
+            return kinveyService.getUserByAuthToken(authToken);
         }
     };
 };
