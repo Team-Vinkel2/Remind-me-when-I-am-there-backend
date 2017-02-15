@@ -3,32 +3,6 @@ module.exports = function(params) {
 
     return {
         name: 'relationshipsController',
-        _testRelationships(req, res) {
-            let firstUser = req.body.firstUser;
-            let secondUser = req.body.secondUser;
-            // console.log('========================');
-            // console.log('REQUEST FROM CLIENT');
-            // console.log('========================');
-            // console.log(firstUser);
-            // console.log('==============');
-            // console.log(secondUser);
-            // console.log('========================');
-            // console.log('END REQUEST FROM CLIENT');
-            // console.log('========================');
-            data.createRelationshipBetweenUsers(firstUser, secondUser)
-                .then(result => {
-                    return res.status(200).json({ success: { message: 'Created relationship successfully' } });
-                });
-        },
-        _testBuddyRequest(req, res) {
-            let fromUser = req.body.fromUser;
-            let toUser = req.body.toUser;
-
-            data.createBuddyRequest(fromUser, toUser)
-                .then(result => {
-                    return res.status(200).send({ success: { message: 'Created buddy request successfully' } });
-                });
-        },
         sendBuddyRequest(req, res) {
             let authToken = req.get('auth-token');
             let toUserUsername = req.body.to_user ? req.body.to_user.username : req.body.to_user;
