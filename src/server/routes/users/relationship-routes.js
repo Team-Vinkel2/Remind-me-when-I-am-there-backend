@@ -3,5 +3,6 @@ module.exports = function(app, controllers) {
     app
         .post('/test-relationship-creation', relationshipsController._testRelationships)
         .post('/test-create-buddy-request', relationshipsController._testBuddyRequest)
-        .post('/send-buddy-request', relationshipsController.sendBuddyRequest);
+        .post('/send-buddy-request', relationshipsController.sendBuddyRequest)
+        .post('/confirm-buddy-request', relationshipsController.confirmBuddyRequest);
 };

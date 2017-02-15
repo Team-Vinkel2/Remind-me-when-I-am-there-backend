@@ -59,6 +59,20 @@ module.exports = function(params) {
                 return http.putJSON(url, body, { headers });
             });
         },
+        deleteFromCollection(collectionName, id) {
+            return Promise.resolve().then(() => {
+                let url = config.urls.getCollectionUrl(collectionName);
+                url = `${url}${id}`;
+
+                let authHeader = config.authHeaders.BASIC_AUTH_HEADER_WITH_MASTER_SECRET;
+
+                let headers = {
+                    [authHeader.name]: authHeader.value
+                };
+
+                return http.deleteJSON(url, { headers });
+            });
+        },
         getUsersByFilter(filter) {
             return Promise.resolve().then(() => {
                 let url = config.urls.getUsersUrl(filter);

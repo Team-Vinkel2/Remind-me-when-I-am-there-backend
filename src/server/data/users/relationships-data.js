@@ -120,7 +120,7 @@ module.exports = function(options) {
                     // console.log('END');
                     // console.log('========================');
 
-                    return '';
+                    return { firstUserRelationships, secondUserRelationships };
                 });
 
             return promise;
@@ -182,6 +182,22 @@ module.exports = function(options) {
             });
 
             return promise;
+        },
+        getBuddyRequestById(id) {
+            let filter = {
+                _id: id
+            };
+
+            return kinveyService.getCollection(buddyRequestsCollection, { filter: JSON.stringify(filter) })
+                .then(result => {
+                    let buddyRequests = result.body;
+                    let [buddyRequest] = buddyRequests;
+                    console.log(buddyRequest);
+                    return buddyRequest;
+                });
+        },
+        deleteBuddyRequest(id) {
+            return kinveyService.deleteFromCollection(buddyRequestsCollection, id);
         }
     };
 };
