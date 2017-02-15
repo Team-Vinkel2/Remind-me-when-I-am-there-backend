@@ -64,3 +64,45 @@ Reset user password by email
     "email": "user email here"
 }
 ```
+## User relationships routes
+
+### **/send-buddy-request**, POST
+
+#### Description:
+
+Sends a buddy request to user
+
+#### Headers:
+    Content-Type: application/json
+    auth-token: the auth token of the user who sends the buddy request
+
+#### Body:
+
+```javascript
+{
+    "to_user": {
+        "username": "the target buddy's username"
+    }
+}
+```
+
+----------
+
+### **/confirm-buddy-request**, POST
+
+#### Description:
+
+Confirm an existing buddy request
+
+#### Headers:
+    Content-Type: application/json
+    auth-token: the auth token of the user who confirms the buddy request
+#### Body:
+
+```javascript
+{
+    "buddyRequest": {
+        "id": "the id of the buddy request"
+    }
+}
+```
