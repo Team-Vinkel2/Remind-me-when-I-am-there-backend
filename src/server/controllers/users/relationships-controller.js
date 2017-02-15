@@ -126,7 +126,7 @@ module.exports = function(params) {
                     }
 
                     if (!(buddyRequest.to_username === user.username) || !(buddyRequest.to_id === user._id)) {
-                        return res.status(403).send({ error: { message: 'You cannot confirm that request. Invalid user identity' } })
+                        return res.status(403).send({ error: { message: 'You cannot confirm that request. Invalid user identity' } });
                     }
 
                     let relationshipUsers = {
