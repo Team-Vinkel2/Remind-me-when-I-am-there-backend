@@ -29,7 +29,7 @@ module.exports = function(params) {
                 username: reminder.to_username
             };
 
-            Promise
+            return Promise
                 .all([
                     data.getUserByAuthToken(authToken),
                     data.getUsersByFilter(JSON.stringify(filter))
@@ -97,6 +97,118 @@ module.exports = function(params) {
                 .catch(err => {
                     return res.status(400).send(err);
                 });
+        },
+        getMyReminders(req, res) {
+            let authToken = req.get('auth-token');
+
+            if (!authToken) {
+                return res.status(400).send({ error: { message: 'Missing user identity!' } });
+            }
+
+            return data.getUserByAuthToken(authToken)
+                .then(result => {
+                    let user = result.body;
+
+                    if (!user || !user._id || !user.username) {
+                        throw { error: { message: 'Your identity is invalid!' } };
+                    }
+
+                    let filter = {
+                        to_username: user.username,
+                        to_id: user._id
+                    };
+
+                    return data.getRemindersByFilter(filter);
+                })
+                .then(result => {
+                    let reminders = result.body;
+
+                    return res.status(200).send(reminders);
+                })
+                .catch(err => {
+                    return res.status(400).send(err);
+                });
+        },
+        getMyPendingReminders(req, res) {
+            let authToken = req.get('auth-token');
+
+            if (!authToken) {
+                return res.status(400).send({ error: { message: 'Missing user identity!' } });
+            }
+
+            return data.getUserByAuthToken(authToken)
+                .then(result => {
+                    let user = result.body;
+
+                    if (!user || !user._id || !user.username) {
+                        throw { error: { message: 'Your identity is invalid!' } };
+                    }
+
+                    let filter = {
+                        to_username: user.username,
+                        to_id: user._id,
+                        accepted: false
+                    };
+
+                    return data.getRemindersByFilter(filter);
+                })
+                .then(result => {
+                    let reminders = result.body;
+
+                    return res.status(200).send(reminders);
+                })
+                .catch(err => {
+                    return res.status(400).send(err);
+                });
+        },
+        getReminder(req, res) {
+            let authToken = req.get('auth-token');
+            let reminderId = req.params.reminderId;
+
+            console.log(reminderId);
+
+            if (!authToken) {
+                return res.status(400).send({ error: { message: 'Missing user identity!' } });
+            }
+
+            if (!reminderId) {
+                return res.status(400).send({ error: { message: 'Reminder ID not provided' } });
+            }
+
+            return Promise
+                .all([
+                    data.getUserByAuthToken(authToken),
+                    data.getReminderById(reminderId)
+                ])
+                .then(result => {
+
+                    let [
+                        userResoponse,
+                        remindersMatchesResponse
+                    ] = result;
+
+                    let user = userResoponse.body;
+                    let [reminder] = remindersMatchesResponse.body;
+
+                    if (!user || !user._id || !user.username) {
+                        throw { error: { message: 'Your identity is invalid!' } };
+                    }
+
+                    if (!reminder || !reminder._id) {
+                        throw { error: { message: 'Reminder does not exist' } };
+                    }
+
+                    if (reminder.to_username !== user.username ||
+                        reminder.to_id !== user._id) {
+                        throw { error: { message: 'This reminder is not yours!' } };
+                    }
+
+                    return res.status(200).send(reminder);
+                })
+                .catch(err => {
+                    return res.status(400).send(err);
+                });
         }
+
     };
 };
