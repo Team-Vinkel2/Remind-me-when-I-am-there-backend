@@ -18,10 +18,8 @@ Login an existing user
 
 ```javascript
 {
-    "user": {
-        "username": "username here",
-        "password": "password here"
-    }
+    "username": "username here",
+    "password": "password here"
 }
 ```
 ----------
@@ -38,12 +36,21 @@ Register a new user
 **ALL FIELDS ARE REQUIRED IN ORDER TO REGISTER**
 ```javascript
 {
-	"user": {
-		"username": "username here",
-		"password": "password here",
-		"email": "email here",
-		"first_name": "first name here"
-	}
+	"username": "username here",
+	"password": "password here",
+	"email": "email here",
+	"first_name": "first name here"
+}
+```
+----------
+
+### Response:
+```javascript
+{
+	"username": "created user username",
+    "email": "created user email",
+    "first_name": "created user firstname",
+    "email_status": "sent|unknown",
 }
 ```
 ----------
@@ -80,9 +87,7 @@ Sends a buddy request to user
 
 ```javascript
 {
-    "to_user": {
-        "username": "the target buddy's username"
-    }
+    "username": "the target buddy's username"
 }
 ```
 
@@ -101,8 +106,6 @@ Confirm an existing buddy request
 
 ```javascript
 {
-    "buddyRequest": {
-        "id": "the id of the buddy request"
-    }
+    "id": "the id of the buddy request"
 }
 ```
