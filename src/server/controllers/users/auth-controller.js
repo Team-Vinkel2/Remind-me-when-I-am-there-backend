@@ -18,7 +18,14 @@ module.exports = function(params) {
                             throw { error: { message: 'Oops! Something went wrong. Try again!' } };
                         }
                     }
-                    return res.status(200).send(body);
+
+                    let userToSend = {
+                        username: body.username,
+                        email: body.email,
+                        first_name: body.first_name,
+                        authtoken: body._kmd.authtoken
+                    };
+                    return res.status(200).send(userToSend);
                 })
                 .catch(err => {
                     return res.status(400).send(err);
