@@ -5,7 +5,7 @@ module.exports = function(params) {
         name: 'relationshipsController',
         sendBuddyRequest(req, res) {
             let authToken = req.get('auth-token');
-            let toUserUsername = req.body.to_user ? req.body.to_user.username : req.body.to_user;
+            let toUserUsername = req.body.username;
 
             if (!authToken) {
                 return res.status(403).send({ error: { message: 'Not authorized' } });
@@ -18,7 +18,7 @@ module.exports = function(params) {
                 username: toUserUsername
             };
 
-            Promise
+            return Promise
                 .all([
                     data.getUserByAuthToken(authToken),
                     data.getUsersByFilter(JSON.stringify(filter))
@@ -33,20 +33,26 @@ module.exports = function(params) {
                     let [toUser] = toUserMatches;
 
                     if (!fromUser || !fromUser._id) {
-                        return res.status(404).send({ error: { message: 'Your identity is invalid!' } });
+                        throw { error: { message: 'Your identity is invalid!' } };
                     }
 
                     if (!toUser || !toUser._id) {
-                        return res.status(404).send({ error: { message: 'User with such username was not found' } });
+                        throw { error: { message: 'User with such username was not found' } };
+                    }
+
+                    if (fromUser._id === toUser._id && fromUser.username === toUser.username) {
+                        throw { error: { message: 'You can\'t send a buddy request to yourself!' } };
                     }
 
                     return Promise.all([
+                        data.checkIfUsersAreBuddies(fromUser, toUser),
                         data.checkIfBuddyRequestExistBetweenUsers(fromUser, toUser),
                         { fromUser, toUser }
                     ]);
                 })
                 .then(result => {
                     let [
+                        usersAreBuddiesStatus,
                         buddyRequestExistStatus,
                         users
                     ] = result;
@@ -56,20 +62,30 @@ module.exports = function(params) {
                         toUser
                     } = users;
 
+                    if (usersAreBuddiesStatus) {
+                        throw { error: { message: 'You are already buddies with this user!' } };
+                    }
+
                     if (buddyRequestExistStatus.exists) {
-                        return res.status(200).send(buddyRequestExistStatus.buddyRequest);
+                        throw { error: { message: 'Buddy request for these two users exists!' } };
                     }
 
                     return data.createBuddyRequest(fromUser, toUser);
                 })
                 .then(result => {
+                    if (result.error) {
+                        throw { error: { message: 'Error creating buddy request' } };
+                    }
                     return res.status(200).send(result);
+                })
+                .catch(err => {
+                    return res.status(400).send(err);
                 });
         },
         confirmBuddyRequest(req, res) {
             let authToken = req.get('auth-token');
 
-            let buddyRequestId = req.body.buddyRequest ? req.body.buddyRequest.id : req.body.buddyRequest;
+            let buddyRequestId = req.body.id;
 
             if (!authToken) {
                 return res.status(400).send({ error: { message: 'Auth token not provided' } });
@@ -92,15 +108,15 @@ module.exports = function(params) {
                     let user = userResult.body;
 
                     if (!user || !user._id) {
-                        return res.status(404).send({ error: { message: 'Invalid auth token!' } });
+                        throw { error: { message: 'Invalid auth token!' } };
                     }
 
                     if (!buddyRequest || !buddyRequest._id) {
-                        return res.status(404).send({ error: { message: 'Buddy request was not found!' } });
+                        throw { error: { message: 'Buddy request was not found!' } };
                     }
 
                     if (!(buddyRequest.to_username === user.username) || !(buddyRequest.to_id === user._id)) {
-                        return res.status(403).send({ error: { message: 'You cannot confirm that request. Invalid user identity' } });
+                        throw { error: { message: 'You cannot confirm that request. Invalid user identity' } };
                     }
 
                     let relationshipUsers = {
@@ -121,9 +137,16 @@ module.exports = function(params) {
                         ]);
                 })
                 .then(result => {
-                    let [usersRelationships] = result;
+                    let [usersRelationshipsCreatedStatus] = result;
 
-                    return res.status(200).send(usersRelationships);
+                    if (!usersRelationshipsCreatedStatus) {
+                        throw { error: { message: 'Unable to create relationship between users' } };
+                    }
+                    return res.sendStatus(200);
+
+                })
+                .catch(err => {
+                    return res.status(400).send(err);
                 });
 
         }

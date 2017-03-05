@@ -120,7 +120,11 @@ module.exports = function(options) {
                     // console.log('END');
                     // console.log('========================');
 
-                    return { firstUserRelationships, secondUserRelationships };
+                    if (!firstUserRelationships._id || !secondUserRelationships._id) {
+                        throw { error: { message: 'Error while creating relationship' } };
+                    }
+
+                    return true;
                 });
 
             return promise;
@@ -242,7 +246,6 @@ module.exports = function(options) {
                 .then(result => {
                     let buddyRequests = result.body;
                     let [buddyRequest] = buddyRequests;
-                    console.log(buddyRequest);
                     return buddyRequest;
                 });
         },

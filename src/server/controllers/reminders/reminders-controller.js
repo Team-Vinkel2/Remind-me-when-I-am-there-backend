@@ -44,11 +44,11 @@ module.exports = function(params) {
                     let [toUser] = toUserResponse.body;
 
                     if (!fromUser || !fromUser._id) {
-                        return res.status(404).send({ error: { message: 'Your identity is invalid!' } });
+                        throw { error: { message: 'Your identity is invalid!' } };
                     }
 
                     if (!toUser || !toUser._id) {
-                        return res.status(404).send({ error: { message: 'User with such username was not found' } });
+                        throw { error: { message: 'User with such username was not found' } };
                     }
 
                     return Promise.all([
@@ -65,7 +65,7 @@ module.exports = function(params) {
                     ] = result;
 
                     if (!usersAreBuddies) {
-                        return res.status(403).send({ error: { message: 'You and the user are not buddies!' } });
+                        throw { error: { message: 'You and the user are not buddies!' } };
                     }
 
                     let newReminder = {
@@ -88,7 +88,7 @@ module.exports = function(params) {
                 .then(result => {
                     let createdReminder = result.body;
                     if (!createdReminder._id) {
-                        return res.status(400).send({ error: { message: 'Reminder was not created!' } });
+                        throw { error: { message: 'Reminder was not created!' } };
                     }
 
                     return res.status(200).send(createdReminder);

@@ -161,7 +161,7 @@ module.exports = {
         "no-sync": "off",
         "no-tabs": "error",
         "no-template-curly-in-string": "error",
-        "no-throw-literal": "error",
+        "no-throw-literal": "off",
         "no-trailing-spaces": "error",
         "no-undef-init": "error",
         "no-undefined": "error",
