@@ -1,7 +1,6 @@
 module.exports = function(app, controllers) {
-    let auth = controllers.authController;
+    let usersController = controllers.usersController;
+
     app
-        .post('/login', auth.loginUser)
-        .post('/register', auth.registerUser)
-        .post('/reset-password', auth.resetPasswordByEmail);
+        .get('/search-users/:partialName', usersController.findUserByPartialName);
 };
