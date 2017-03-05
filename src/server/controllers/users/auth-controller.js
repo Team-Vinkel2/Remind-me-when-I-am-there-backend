@@ -6,7 +6,7 @@ module.exports = function(params) {
         loginUser(req, res) {
             let user = req.body;
 
-            data.loginUser(user)
+            return data.loginUser(user)
                 .then(result => {
                     let body = result.body;
                     if (body.error) {
@@ -26,7 +26,7 @@ module.exports = function(params) {
         },
         registerUser(req, res) {
             let user = req.body;
-            data.registerUser(user)
+            return data.registerUser(user)
                 .then(result => {
                     let createdUser = result.body;
                     if (createdUser.error) {
@@ -45,7 +45,8 @@ module.exports = function(params) {
 
                     if (!createdUser._kmd ||
                         !createdUser._kmd.emailVerification ||
-                        !createdUser._kmd.emailVerification.status) {
+                        !createdUser._kmd.emailVerification.status ||
+                        createdUser._kmd.emailVerification.status !== 'sent') {
                         normifiedUser.email_status = 'unknown';
                     } else {
                         normifiedUser.email_status = createdUser._kmd.emailVerification.status;
@@ -74,7 +75,7 @@ module.exports = function(params) {
             if (!email) {
                 return res.status(400).send({ error: { message: 'No email was provided!' } });
             }
-            data.resetPasswordByEmail(email)
+            return data.resetPasswordByEmail(email)
                 .then(result => {
                     return res.sendStatus(200);
                 })

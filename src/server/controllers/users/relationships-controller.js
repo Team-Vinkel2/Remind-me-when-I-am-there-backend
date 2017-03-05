@@ -149,6 +149,102 @@ module.exports = function(params) {
                     return res.status(400).send(err);
                 });
 
+        },
+        checkStatusBetweenUsers(req, res) {
+            let authToken = req.get('auth-token');
+            let toUserUsername = req.body.user_username;
+
+            if (!authToken) {
+                return res.status(403).send({ error: { message: 'Not authorized' } });
+            }
+
+            if (!toUserUsername) {
+                return res.status(400).send({ error: { message: 'Requested user not provided' } });
+            }
+            let filter = {
+                username: toUserUsername
+            };
+
+            let usersStatus = {
+                status: 'unrelated'
+            };
+
+            return Promise
+                .all([
+                    data.getUserByAuthToken(authToken),
+                    data.getUsersByFilter(JSON.stringify(filter))
+                ]).then(result => {
+                    let [
+                        firstUserResponse,
+                        secondResponse
+                    ] = result;
+
+                    let fromUser = firstUserResponse.body;
+                    let toUserMatches = secondResponse.body;
+                    let [toUser] = toUserMatches;
+
+                    if (!fromUser || !fromUser._id) {
+                        throw { error: { message: 'Your identity is invalid!' } };
+                    }
+
+                    if (!toUser || !toUser._id) {
+                        throw { error: { message: 'User with such username was not found' } };
+                    }
+
+                    if (fromUser._id === toUser._id && fromUser.username === toUser.username) {
+                        throw { error: { message: 'Pretty sure you are friends with yourself' } };
+                    }
+
+                    return Promise.all([
+                        data.checkIfUsersAreBuddies(fromUser, toUser),
+                        { fromUser, toUser }
+                    ]);
+                })
+                .then((result => {
+
+                    let [
+                        usersAreBuddies,
+                        users
+                    ] = result;
+
+                    if (usersAreBuddies) {
+                        usersStatus.status = 'buddies';
+                        res.status(200).send(usersStatus);
+                        throw { responseSent: true };
+                    } else {
+                        return Promise.all([
+                            data.checkIfBuddyRequestExistBetweenUsers(users.fromUser, users.toUser),
+                            users
+                        ]);
+                    }
+                }))
+                .then(result => {
+                    let [
+                        buddyRequestExistsStatus,
+                        users
+                    ] = result;
+
+                    if (buddyRequestExistsStatus.exists) {
+                        if (buddyRequestExistsStatus.buddyRequest.from_username === users.fromUser.username &&
+                            buddyRequestExistsStatus.buddyRequest.from_id === users.fromUser._id) {
+                            usersStatus.status = 'sent';
+                        } else if (buddyRequestExistsStatus.buddyRequest.from_username === users.toUser.username &&
+                            buddyRequestExistsStatus.buddyRequest.from_id === users.toUser._id) {
+                            usersStatus.status = 'received';
+                            usersStatus.request_id = buddyRequestExistsStatus.buddyRequest._id;
+                        }
+                        res.status(200).send(usersStatus);
+                        throw { responseSent: true };
+                    }
+
+                    return res.status(200).send(usersStatus);
+                })
+                .catch(err => {
+                    if (err.responseSent) {
+                        return;
+                    }
+                    return res.status(400).send(err);
+                });
         }
     };
 };
