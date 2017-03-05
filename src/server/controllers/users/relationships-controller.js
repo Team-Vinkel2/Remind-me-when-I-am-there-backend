@@ -76,7 +76,7 @@ module.exports = function(params) {
                     if (result.error) {
                         throw { error: { message: 'Error creating buddy request' } };
                     }
-                    return res.status(200).send(result);
+                    return res.sendStatus(200);
                 })
                 .catch(err => {
                     return res.status(400).send(err);
@@ -243,6 +243,73 @@ module.exports = function(params) {
                     if (err.responseSent) {
                         return;
                     }
+                    return res.status(400).send(err);
+                });
+        },
+        getBuddies(req, res) {
+            let authToken = req.get('auth-token');
+
+            if (!authToken) {
+                return res.status(400).send({ error: { message: 'Missing user identity!' } });
+            }
+
+            return data.getUserByAuthToken(authToken)
+                .then(result => {
+                    let user = result.body;
+
+                    if (!user || !user._id || !user.username) {
+                        throw { error: { message: 'Your identity is invalid!' } };
+                    }
+
+                    return data.getRelationshipsForUser(user);
+                })
+                .then(result => {
+                    let foundRelationshipMaps = result.body;
+                    let [
+                        foundRelationshipMap
+                    ] = foundRelationshipMaps;
+
+                    if (!foundRelationshipMap) {
+                        throw { error: { message: 'No relations map found' } };
+                    }
+
+                    let buddies = [];
+
+                    if (foundRelationshipMap.buddies) {
+                        buddies = foundRelationshipMap.buddies;
+                    }
+
+                    return res.status(200).send(buddies);
+                })
+                .catch(err => {
+                    return res.status(400).send(err);
+                });
+        },
+        getBuddyRequests(req, res) {
+            let authToken = req.get('auth-token');
+
+            if (!authToken) {
+                return res.status(400).send({ error: { message: 'Missing user identity!' } });
+            }
+
+            return data.getUserByAuthToken(authToken)
+                .then(result => {
+                    let user = result.body;
+
+                    if (!user || !user._id || !user.username) {
+                        throw { error: { message: 'Your identity is invalid!' } };
+                    }
+
+                    return data.getBuddyRequstsForUser(user);
+                })
+                .then(result => {
+                    if (!result) {
+                        throw { error: { message: 'Error while fetching buddy requests' } };
+                    }
+
+                    return res.status(200).send(result);
+                })
+                .catch(err => {
                     return res.status(400).send(err);
                 });
         }

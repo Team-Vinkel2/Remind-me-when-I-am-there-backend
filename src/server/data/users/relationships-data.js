@@ -237,6 +237,18 @@ module.exports = function(options) {
 
             return promise;
         },
+        getBuddyRequstsForUser(user) {
+            let filter = {
+                to_username: user.username,
+                to_id: user._id
+            };
+
+            return kinveyService.getCollection(buddyRequestsCollection, { filter: JSON.stringify(filter) })
+                .then(result => {
+                    let buddyRequests = result.body;
+                    return buddyRequests;
+                });
+        },
         getBuddyRequestById(id) {
             let filter = {
                 _id: id
@@ -251,6 +263,14 @@ module.exports = function(options) {
         },
         deleteBuddyRequest(id) {
             return kinveyService.deleteFromCollection(buddyRequestsCollection, id);
+        },
+        getRelationshipsForUser(user) {
+            let filter = {
+                user_id: user._id,
+                user_username: user.username
+            };
+
+            return kinveyService.getCollection(relationshipsCollection, { filter: JSON.stringify(filter) });
         }
     };
 };
