@@ -149,6 +149,56 @@ module.exports = function(options) {
 
             return promise;
         },
+        checkIfUsersAreBuddies(firstUser, secondUser) {
+            let promise = new Promise((resolve, reject) => {
+                if (!firstUser._id || !firstUser.username || !secondUser._id || !secondUser.username) {
+                    return reject({ error: { message: 'Id/username for BOTH users was not presented' } });
+                }
+
+                let firstUserRelationshipsFilter = {
+                    user_id: firstUser._id,
+                    user_username: firstUser.username
+                };
+
+                let secondUserRelationshipsFilter = {
+                    user_id: secondUser._id,
+                    user_username: secondUser.username
+                };
+
+                resolve(Promise.all([
+                    kinveyService.getCollection(relationshipsCollection, { filter: JSON.stringify(firstUserRelationshipsFilter) }),
+                    kinveyService.getCollection(relationshipsCollection, { filter: JSON.stringify(secondUserRelationshipsFilter) })
+                ]));
+            }).then(result => {
+                let [
+                    firstUserRelationshipsResponse,
+                    secondUserRelationshipsResponse
+                ] = result;
+
+                let [firstUserRelationships] = firstUserRelationshipsResponse.body;
+                let [secondUserRelationships] = secondUserRelationshipsResponse.body;
+
+                if (!firstUserRelationships._id || !secondUserRelationships._id) {
+                    return false;
+                }
+
+                let firstUserIsBuddy = false;
+                let secondUserIsBuddy = false;
+
+                if (firstUserRelationships.buddies.indexOf(secondUser.username) >= 0) {
+                    firstUserIsBuddy = true;
+                }
+
+                if (secondUserRelationships.buddies.indexOf(firstUser.username) >= 0) {
+                    secondUserIsBuddy = true;
+                }
+
+                return firstUserIsBuddy && secondUserIsBuddy;
+
+            });
+
+            return promise;
+        },
         checkIfBuddyRequestExistBetweenUsers(firstUser, secondUser) {
             let promise = new Promise((resolve, reject) => {
 
