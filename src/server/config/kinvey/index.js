@@ -3,9 +3,9 @@ const crypto = require('../../utils/crypto');
 const AUTHORIZATION_HEADER_NAME = 'Authorization';
 
 const kinveyKeys = {
-    APP_SECRET: '75aa6ca49f95411d8fa9808720a3118b',
-    MASTER_SECRET: 'e71f325d693446b18c9970d5a6a181a7',
-    APP_ID: 'kid_SkU9ANLug'
+    APP_SECRET: process.env.APP_SECRET,
+    MASTER_SECRET: process.env.MASTER_SECRET,
+    APP_ID: process.env.APP_ID
 };
 
 const kinveyAuth = {
