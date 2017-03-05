@@ -18,8 +18,8 @@ module.exports = function(options) {
 
             return kinveyService.getCollection(remindersCollection, { filter: JSON.stringify(filter) });
         },
-        changeReminder(reminder) {
-            return kinveyService.putCollection(remindersCollection, reminder);
+        updateReminder(reminder) {
+            return kinveyService.putCollection(remindersCollection, reminder, { id: reminder._id });
         }
     };
 };

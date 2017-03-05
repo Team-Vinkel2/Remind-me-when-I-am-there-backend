@@ -165,7 +165,6 @@ module.exports = function(params) {
             let authToken = req.get('auth-token');
             let reminderId = req.params.reminderId;
 
-            console.log(reminderId);
 
             if (!authToken) {
                 return res.status(400).send({ error: { message: 'Missing user identity!' } });
@@ -204,6 +203,63 @@ module.exports = function(params) {
                     }
 
                     return res.status(200).send(reminder);
+                })
+                .catch(err => {
+                    return res.status(400).send(err);
+                });
+        },
+        acceptReminder(req, res) {
+            let authToken = req.get('auth-token');
+            let reminderId = req.params.reminderId;
+
+            if (!authToken) {
+                return res.status(400).send({ error: { message: 'Missing user identity!' } });
+            }
+
+            if (!reminderId) {
+                return res.status(400).send({ error: { message: 'Reminder ID not provided' } });
+            }
+
+            return Promise
+                .all([
+                    data.getUserByAuthToken(authToken),
+                    data.getReminderById(reminderId)
+                ])
+                .then(result => {
+
+                    let [
+                        userResoponse,
+                        remindersMatchesResponse
+                    ] = result;
+
+                    let user = userResoponse.body;
+                    let [reminder] = remindersMatchesResponse.body;
+
+                    if (!user || !user._id || !user.username) {
+                        throw { error: { message: 'Your identity is invalid!' } };
+                    }
+
+                    if (!reminder || !reminder._id) {
+                        throw { error: { message: 'Reminder does not exist' } };
+                    }
+
+                    if (reminder.to_username !== user.username ||
+                        reminder.to_id !== user._id) {
+                        throw { error: { message: 'This reminder is not yours!' } };
+                    }
+
+                    reminder.accepted = true;
+
+                    return data.updateReminder(reminder);
+                })
+                .then(result => {
+                    let reminder = result.body;
+
+                    if (!reminder || !reminder._id) {
+                        throw { error: { message: 'Failed to update remidner' } };
+                    }
+
+                    return res.sendStatus(200);
                 })
                 .catch(err => {
                     return res.status(400).send(err);
