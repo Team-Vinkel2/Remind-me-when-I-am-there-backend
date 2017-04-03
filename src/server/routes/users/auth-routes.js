@@ -3,5 +3,5 @@ module.exports = function(app, controllers) {
     app
         .post('/login', auth.loginUser)
         .post('/register', auth.registerUser)
-        .post('/reset-password', auth.resetPasswordByEmail);
+        .put('/reset-password', auth.resetPasswordByEmail);
 };
